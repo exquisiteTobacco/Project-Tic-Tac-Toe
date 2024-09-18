@@ -11,14 +11,32 @@
 </head>
 <body>
     <div class="container">
+        <div class="score">
+            <div id="playerOne">Player 1 score: <span id="scoreOne">0</span></div>  
+            <div id="playerTwo">Player 2 score: <span id="scoreTwo">0</span></div>  
+        </div>
         <div class="board">
 
         </div>
         <div class="message">
     
         </div>
+        <button class="btnStart">Start Game</button>
+        <div id="myModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+              <span class="close">&times;</span>
+              <label for="playerNameOne">Input Player 1 name: </label>
+              <input type="text" id="playerNameOne" name="playerNameOne">
+              <label for="playerNameTwo">Input Player 2 name:</label>
+              <input type="text" id="playerNameTwo" name="playerNameTwo">
+              <button type="submit" class="btn">Submit</button>
+            </div>
+          
+          </div>
     </div>
-   
+    
     
 </body>
 </html>

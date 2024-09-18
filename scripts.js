@@ -1,8 +1,16 @@
 // Player factory function
-// Player factory function
 function Player(name) {
     let score = 0;
-    return { name, score };
+    return { 
+        name, 
+        score,
+        incrementScore: function() {
+            this.score++;
+        },
+        getScore: function() {
+            return this.score;
+        }
+    };
 }
 
 const gameBoard = function() {
@@ -40,6 +48,7 @@ const gameUI = function() {
     const createBoardUI = () => {
         const gameBoard = document.querySelector(".board");
         gameBoard.innerHTML = ''; // Clear existing content
+        
         for (let i = 0; i < 9; i++) {
             const cell = document.createElement("div");
             cell.setAttribute("id", `${Math.floor(i / 3)}-${i % 3}`);
@@ -49,17 +58,21 @@ const gameUI = function() {
         }
         const container = document.querySelector(".container");
         const resetButton = document.createElement("button");
+        const nameChange = document.createElement("button");
+        nameChange.textContent = "Change Names Of Players";
+        nameChange.id = "nameChange";
         resetButton.textContent = "Reset";
         resetButton.id = "reset";
         container.appendChild(resetButton); 
-        resetButton.addEventListener('click', handleReset); // Append resetButton to container
-        }
+        resetButton.addEventListener('click', handleReset);
+    }
 
-        const handleReset = () => {     
-            const container = document.querySelector(".container");
-            container.removeChild(container.lastChild);
+    const handleReset = () => {     
+        const container = document.querySelector(".container");
+        container.removeChild(container.lastChild);
         game.playGame();
-        }
+    }
+    
     const handleCellClick = (event) => {
         const [row, column] = event.target.id.split('-').map(Number);
         game.makeMove(row, column);
@@ -84,7 +97,14 @@ const gameUI = function() {
         }
     }
 
-    return { createBoardUI, updateBoard, showMessage };
+    const updateScores = (player1, player2) => {
+        const scoreOne = document.querySelector("#scoreOne");
+        const scoreTwo = document.querySelector("#scoreTwo");
+        scoreOne.textContent = `${player1.getScore()}`;
+        scoreTwo.textContent = `${player2.getScore()}`;
+    }
+
+    return { createBoardUI, updateBoard, showMessage, updateScores };
 }
 
 const gameFlow = function(ui) {
@@ -103,6 +123,7 @@ const gameFlow = function(ui) {
         gameState.board.createBoard();
         gameState.moveCounter = 0;
         gameState.isGameOver = false;
+        ui.updateScores(gameState.player1, gameState.player2);
     }
 
     const changePlayer = () => {
@@ -166,7 +187,8 @@ const gameFlow = function(ui) {
             const result = checkWinner();
             if (result.result === 'win') {
                 gameState.isGameOver = true;
-                result.winner.score++;
+                result.winner.incrementScore();
+                ui.updateScores(gameState.player1, gameState.player2);
                 ui.showMessage(`${result.winner.name} wins!`);
             } else if (result.result === 'draw') {
                 gameState.isGameOver = true;
@@ -179,16 +201,18 @@ const gameFlow = function(ui) {
     }
 
     const playGame = () => {
-        initGame();
         ui.createBoardUI();
+        initGame();
+        
     }
 
     return { playGame, makeMove };
 }
 
-// Initialize the game
 const ui = gameUI();
 const game = gameFlow(ui);
-
-// Start the game
-game.playGame();
+const Start = document.querySelector(".btnStart");
+Start.addEventListener('click', () => {
+    game.playGame();
+    Start.remove();
+});
